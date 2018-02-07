@@ -40,7 +40,10 @@ class Fetcher:
         engine.say(file);
         engine.runAndWait() ;
         Fetcher().OpenUrl( text)
-    #This is gives you the headlines for the daily news 
+        
+    #This is the extension of the look command
+    #This lets you make choices from the options specified in the lookup
+    #Then if the link exists it opens in your browser
     def OpenUrl(self,text):
         r=sr.Recognizer()
         jsonfile=open("./BetaB/json/MyJson.json","r+") 
