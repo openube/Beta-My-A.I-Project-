@@ -14,7 +14,7 @@ import subprocess
 import os
 import pyttsx3;
 from os.path import join
-from Tasker import Fetcher
+from .Tasker import Fetcher
 
 
 class MainEngine:
@@ -26,6 +26,8 @@ class MainEngine:
         self.cancel=["no","negative","negative soldier","wait","cancel","nope","dont  it","deny"]
         
     def discover(self,text):
+        jsonfile=open("./BetaB/json/MyJson.json","r+") 
+        data=jsonfile.read()
         if "weather" in text:
             with sr.Microphone() as source:
                 r=sr.Recognizer()
@@ -34,13 +36,13 @@ class MainEngine:
                 engine.runAndWait() ;
                 print("Listening...")
                 audio=r.listen(source)
-            loc=r.recognize_google(audio)
+            loc=r.recognize_google_cloud(audio, credentials_json=data)
             lookup = weather.lookup(560743)
             condition = lookup.condition()
             print(condition.text())
             
             # Lookup via location name.
-            file=open("weather.txt","w+")
+            file=open("./weather.txt","w+")
             location = weather.lookup_by_location(loc)
             condition = location.condition()
             print(condition.text())
@@ -54,7 +56,7 @@ class MainEngine:
                 file.write("High Temperature:"+forecast.high()+"degrees"+"\n")
                 file.write("Low Temperature:"+forecast.low()+"degrees"+"\n")
             file.close()
-            file=open("weather.txt","r+")
+            file=open("./weather.txt","r+")
             file=file.read()
             engine.say(file);
             engine.runAndWait() ; 
@@ -68,7 +70,7 @@ class MainEngine:
                     engine.say("Cool! Which artist?")
                     engine.runAndWait() ;
                     audio=r.listen(source)
-                artist=r.recognize_google(audio)
+                artist=r.recognize_google_cloud(audio, credentials_json=data)
                 query_string = urllib.parse.urlencode({"search_query" : artist})
                 html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
                 search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
@@ -88,7 +90,7 @@ class MainEngine:
                 self.respond("You havent told me your name")
             else:
                 self.respond("My name is python command. How are you?")
-        elif "launch"  in text:
+        elif "launch" in text:
             app =text.split(" ", 1)[-1]
             app=app.lower()
             app=(app+".exe")
@@ -110,7 +112,11 @@ class MainEngine:
                         print ("found: %s" % join(root, app))
                         break
             subprocess.call(root)
-        elif "restaurant" in text:
+        elif "lookup" in text:
+            text=text.split(" ",1)[-1]
+            f=Fetcher().lookup(text)
+        elif "look up" in text:
+            text=text.split(" ",2)[-1]
             f=Fetcher().lookup(text)
         elif "news" in text:
             news=Fetcher().News()
