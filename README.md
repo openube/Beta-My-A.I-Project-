@@ -19,11 +19,15 @@ weather -gives you specific information on the weather and location you want to 
 
 launch program (this command is still in progress)
 
+stock- check stock prices 
+
+
 
 To run 
 Clone the package to a new folder and use within the new folder you created not inside the package itself 
 In your python editor,
 Type:
-  from BetaB import Starter
-  Starter()
-        
+  from BetaB.Ai_interfce import main
+main()
+
+A Gui window pops up and you press activate
