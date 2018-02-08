@@ -6,7 +6,7 @@ This covers the frontal core of the A.I program. It is from this point you initi
 all the required information search for what you need
 '''
 import simplejson as json
-from .MainEngine import MainEngine
+from BetaB.Engine.MainEngine import MainEngine
 import pyaudio
 import wave
 import speech_recognition as sr
@@ -14,7 +14,7 @@ import pyttsx3;
 from time import sleep
 import sys
 #The running is used to help end the program loop once the required information has been gotten
-running=True
+running=''
 cmd=MainEngine()
 
 
@@ -48,18 +48,18 @@ def initSpeech():
     
     data=jsonfile.read()
     
-    
+    global running
     #The speech recognizer microphone is renamed as source     
     with sr.Microphone() as source:
         r=sr.Recognizer()
         r.energy_threshold=1000
         r.phrase_threshold=0
         engine=pyttsx3.init() 
-        global running
+        
         #The microphone is caliberated with the ambient sound to aid clarity
         engine.say("Please wait. Calibrating microphone...")
         engine.runAndWait() ;  
-        engine.say("My name is Bytes B version 1.0 . What is your name?")
+        engine.say("My name is Beta B version 1.0 . What is your name?")
         engine.runAndWait() ;
         name=r.listen(source)
         print(name)
@@ -81,7 +81,7 @@ def initSpeech():
     except:
         engine.say("sorry didnt get that. Please try again")
         engine.runAndWait() ;
-        initSpeech()
+        running=True
         
     if command in ["exit","quit","end","googbye"]:
         engine.say("Shutting Down")
