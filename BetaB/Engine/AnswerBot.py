@@ -21,9 +21,19 @@ class AnswerBot:
         soup=BeautifulSoup(self.driver.page_source,"html.parser")
         answer=soup.find_all(class_="_sPg")
         if answer:
-                answer=(answer[0].get_text())
+            answer=(answer[0].get_text())
+            if (answer[:4])=='http' or (answer[:3])== "www":
+                    answer=[]
+                
+        if not answer:            
+            links=soup.find_all("div",{'class':"s"})
+            items=[]
         
-
+            for item in links:
+                item=(item.find("span",{'class':"st"}))
+                items.append(item.get_text())
+        
+            answer=(items[1])
         
 #         with open("twst.html","w+") as f:
 #             f.write(str(soup))
@@ -31,11 +41,13 @@ class AnswerBot:
             answer=soup.find_all(class_="_m3b")
             if answer:
                 answer=(answer[0].get_text())
+                if (answer[:4])=='http' or (answer[:3])== "www":
+                    answer=[]
         if not answer:
             answer=soup.find_all(class_="kv")
             if answer:
                 answer=(answer[0].get_text())
-                if (answer[:4])=='http':
+                if (answer[:4])=='http' or (answer[:3])== "www":
                     answer=[]
 
             
@@ -44,15 +56,18 @@ class AnswerBot:
             answer=soup.find_all(id="_vBb")
             if answer:
                 items=(answer[0].text)
-                answer=items.split(",")
-                answer=answer
- 
-                 
+                if (answer[:4])=='http' or (answer[:3])== "www":
+                    answer=[]
+                else:
+                    answer=items.split(",")
+                    answer=answer
+                    
+    
+                     
         return answer
     
     def person_ans(self):
         r=requests.get(self.url)
-        print(r)
         soup=BeautifulSoup(r.text,"html.parser")
         links=soup.find_all("div",{'class':"s"})
         items=[]

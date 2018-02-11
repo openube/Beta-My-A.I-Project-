@@ -5,6 +5,8 @@ Created on Feb 6, 2018
 This is the main engine that holds most of the commands that the A.I would deal with. It is at this point
 that the text said by user would be filtered to match the specifications of the user
 '''
+import requests
+import json
 from weather import Weather
 import speech_recognition as sr
 import urllib
@@ -31,24 +33,22 @@ class MainEngine:
         jsonfile=open("./BetaB/json/MyJson.json","r+") 
         data=jsonfile.read()
         if "weather" in text:
-            with sr.Microphone() as source:
-                r=sr.Recognizer()
-                engine=pyttsx3.init()   
-                engine.say("Where would like to look?")
-                engine.runAndWait() ;
-                print("Listening...")
-                audio=r.listen(source)
-            loc=r.recognize_google_cloud(audio, credentials_json=data)
+
+            #looks up the current location you are in
+            send_url = 'http://freegeoip.net/json'
+            r = requests.get(send_url)
+            j = json.loads(r.text)
+
+            city=j["city"]
             lookup = weather.lookup(560743)
             condition = lookup.condition()
 
             
             # Lookup via location name.
             file=open("./weather.txt","w+")
-            location = weather.lookup_by_location(loc)
+            location = weather.lookup_by_location(city)
             condition = location.condition()
 
-            
             # Get weather forecasts for the upcoming days.
             
             forecasts = location.forecast()
@@ -60,7 +60,7 @@ class MainEngine:
             file.close()
             file=open("./weather.txt","r+")
             file=file.read()
-
+            engine=pyttsx3.init()
             engine.say(file);
             engine.runAndWait() ; 
 
@@ -126,14 +126,28 @@ class MainEngine:
         elif "news" in text:
             news=Fetcher().News()
         elif "stock" in text:
-            stock=Stock_market()  
-        elif "who" or "what" or "how"  or "why" in text:
-            f=AnswerBot("https://www.google.ca/search?q="+text)
-            answer=f.ansbot()
-            self.respond(answer)
+            stock=Stock_market()
+        elif 'where' and 'closest' in text or "nearby" in text:
+            print(text)
+            Fetcher().Nearbyplaces(text)  
+#         elif "who" or "what" or "how"  or "why" in text:
+#             print(text)
+#             print("1")
+#             f=AnswerBot("https://www.google.ca/search?q="+text)
+#             answer=f.ansbot()
+#             self.respond(answer)
         elif "who" and "is" in text:
+            print(text)
+            print("2")
             f=AnswerBot("https://www.google.ca/search?q="+text)
             answer=f.person_ans()
+            self.respond(answer)
+        
+            
+        else:
+            print(text)
+            f=AnswerBot("https://www.google.ca/search?q="+text)
+            answer=f.ansbot()
             self.respond(answer)
             
           

@@ -104,6 +104,57 @@ class Fetcher:
         engine=pyttsx3.init() 
         engine.say(file);
         engine.runAndWait() ; 
-                
+        
+    def Nearbyplaces(self,text):
+        r=requests.get("https://www.google.ca/search?q="+text)
+        soup=BeautifulSoup(r.text,"html.parser")
+        answer=soup.find("div",{'class': ['_Arj',"g"]})
+        divs=answer.find_all("div")
+        engine=pyttsx3.init()
+        for div in divs:
+            tds=(div.find_all("td"))
+            if tds:
+            
+                divs=(div.find_all("div"))
+                div=' '
+                title=(divs[0].get_text())
+                if not text.__contains__(title.lower()):
+                    div=(divs[0].get_text())
+                div1=(divs[1].get_text())
+                num=div1.find("(")
+        
+                if not num==-1: 
+                    div1=(div1[:num-2])
+                try:
+                    if isinstance(float(div1), float):
+                        div1=''
+                except:
+                    div1=div1
+                div2=(divs[2].get_text())
+                num1=div2.find("(")
+               
+                if not num1==-1:
+                    div2=(div2[:num1-2])
+                div3=(divs[3].get_text())
+                div5=''
+                if len(divs) >3 and not div1:
+                    div5=(divs[5].get_text())
+                    num2=div5.find("(")
+        
+                    if not num2==-1:
+                        div5=(div5[:num2-2])
+                print(div1, div5)
+             
+                engine.say(div)
+                engine.runAndWait() ;
+                engine.say(div1)
+                engine.runAndWait() ;
+                engine.say(div2)
+                engine.runAndWait() ;
+                engine.say(div3)
+                engine.runAndWait() ;
+                engine.say(div5)
+                engine.runAndWait() ;
                         
+                            
                         
