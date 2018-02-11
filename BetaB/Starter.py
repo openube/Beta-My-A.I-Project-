@@ -62,7 +62,6 @@ def initSpeech():
         engine.say("My name is Beta B version 1.0 . What is your name?")
         engine.runAndWait() ;
         name=r.listen(source)
-        print(name)
         name=r.recognize_google_cloud(name, credentials_json=data)
         play_audio("./BetaB/audio/start.wav")
         engine.say("Nice to meet you "+ name)
@@ -70,18 +69,18 @@ def initSpeech():
         engine.say("What would you like to do today")
         engine.runAndWait() ;
         print("Begin speaking...")
-        print(running)
+
         task=r.listen(source) 
     try:
         
         command=r.recognize_google_cloud(task, credentials_json=data)
-        
+
         running=False
 
     except:
         engine.say("sorry didnt get that. Please try again")
         engine.runAndWait() ;
-        running=True
+        initSpeech()
         
     if command in ["exit","quit","end","googbye"]:
         engine.say("Shutting Down")
@@ -91,6 +90,6 @@ def initSpeech():
     
   
  
-print(running)
+
 while running==True:
     initSpeech()

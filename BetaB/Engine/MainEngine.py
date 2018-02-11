@@ -16,6 +16,7 @@ import pyttsx3;
 from os.path import join
 from .Tasker import Fetcher
 from .Stockmarket import Stock_market
+from .AnswerBot import AnswerBot
 
 
 class MainEngine:
@@ -40,13 +41,13 @@ class MainEngine:
             loc=r.recognize_google_cloud(audio, credentials_json=data)
             lookup = weather.lookup(560743)
             condition = lookup.condition()
-            print(condition.text())
+
             
             # Lookup via location name.
             file=open("./weather.txt","w+")
             location = weather.lookup_by_location(loc)
             condition = location.condition()
-            print(condition.text())
+
             
             # Get weather forecasts for the upcoming days.
             
@@ -59,6 +60,7 @@ class MainEngine:
             file.close()
             file=open("./weather.txt","r+")
             file=file.read()
+
             engine.say(file);
             engine.runAndWait() ; 
 
@@ -76,6 +78,7 @@ class MainEngine:
                 html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
                 search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
                 web=("http://www.youtube.com/watch?v=" + search_results[0])
+
                 webbrowser.open(web)
             else:
                 artist= text.split(" ",1)[-1]
@@ -84,6 +87,7 @@ class MainEngine:
                 html_content = urllib.request.urlopen("http://www.youtube.com/results?" + query_string)
                 search_results = re.findall(r'href=\"\/watch\?v=(.{11})', html_content.read().decode())
                 web=("http://www.youtube.com/watch?v=" + search_results[0])
+
                 webbrowser.open(web)
             
         elif "what" in text and "your name" in text:
@@ -122,7 +126,17 @@ class MainEngine:
         elif "news" in text:
             news=Fetcher().News()
         elif "stock" in text:
-            stock=Stock_market()    
+            stock=Stock_market()  
+        elif "who" or "what" or "how"  or "why" in text:
+            f=AnswerBot("https://www.google.ca/search?q="+text)
+            answer=f.ansbot()
+            self.respond(answer)
+        elif "who" and "is" in text:
+            f=AnswerBot("https://www.google.ca/search?q="+text)
+            answer=f.person_ans()
+            self.respond(answer)
+            
+          
             
             
     def respond(self,response):
